@@ -44,7 +44,8 @@ If you would like to try the *ISLR* labs using these two packages instead of bas
 - Run the `setup` code chunk and/or **knit** <img src="../README-img/knit-icon.png" alt="knit" width = "20"/> icon your Rmd document to verify that no errors occur.
 
 ```{r setup}
-
+library(tidyverse)
+library(tidymodels)
 ```
 
 ![check-in](../README-img/noun-magnifying-glass.png) **Check in**
