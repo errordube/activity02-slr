@@ -46,6 +46,7 @@ If you would like to try the *ISLR* labs using these two packages instead of bas
 ```{r setup}
 library(tidyverse)
 library(tidymodels)
+library(dplyr)
 ```
 
 ![check-in](../README-img/noun-magnifying-glass.png) **Check in**
@@ -64,8 +65,8 @@ In the R code chunk below titled `load-data`, you will type the code that reads 
 
 After doing this and viewing the loaded data, answer the following questions:
 
-1. What are the dimensions of the dataset?
-  What does each row represent?
+1. What are the dimensions of the dataset? [1458, 123]
+  What does each row represent? [A set of related data]
 
 The dataset spans a lot of years.
 We are only interested in data from year 2016.
@@ -75,7 +76,9 @@ In the R code chunk below titled `hfi-2016`, type the code that does the followi
 - Assigns the result to a data frame named `hfi_2016`.
 
 ```{r hfi-2016}
-
+hfi <- read_csv("hfi.csv")
+dim(hfi)
+hfi_2016 <- hfi %>% filter(year == "2016") %>% select(year, ISO_code, countries, region, pf_score, pf_expression_control)
 ```
 
 ### 1. Identify our research question(s)
@@ -91,7 +94,9 @@ Specifically, we are going to use the political pressures and controls on media 
 Answer the following questions (use your markdown skills) and complete the following tasks.
 
 2. What type of plot would you use to display the distribution of the personal freedom scores, `pf_score`? 
-  Would this be the same type of plot to display the distribution of the political pressures and controls on media content index, `pf_expression_control`?
+[I will use box plot, since it will provide a clear view of the median (center), quartiles (spread), and outliers. They are particularly effective for identifying outliers and understanding the overall variability in the data]
+  Would this be the same type of plot to display the distribution of the political pressures and controls on media content index, `pf_expression_control`? 
+  [Yes]
 
 
 
@@ -99,26 +104,39 @@ Answer the following questions (use your markdown skills) and complete the follo
 - In the R code chunk below titled `univariable-plots`, type the R code that displays this plot for `pf_expression_control`.
 
 ```{r distribution-plots}
+ggplot(hfi_2016, aes(y = pf_score)) +
+  geom_boxplot(fill = "grey") +
+  ggtitle("Box Plot of Personal Freedom Scores") +
+  ylab("Personal Freedom Score")
 
+ggplot(hfi_2016, aes(y = pf_expression_control)) +
+  geom_boxplot(fill = "grey") +
+  ggtitle("Box Plot of Political Pressures and Controls on Media Content Index") +
+  ylab("Political Pressures and Controls on Media Content Index")
 ```
 
 4. Comment on each of these two distributions. 
   Be sure to describe their centers, spread, shape, and any potential outliers.
 
+Answer: For pf_score: It shows a relatively high median above 7, indicating that most countries have high personal freedom scores with a narrow interquartile range, suggesting a low level of variability among the middle 50% of the countries. but there are a few outliers indicating some countries with exceptionally low personal freedom scores.
 
+For pf_expression_control: It has a median around 5, with a wider interquartile range, which points to greater variability in how countries exert control over media content. This distribution appears slightly left-skewed, indicating a tail with countries that have lower levels of media content control; however, there are no significant outliers depicted in this plot.
 
 3. What type of plot would you use to display the relationship between the personal freedom score, `pf_score`, and the political pressures and controls on media content index,`pf_expression_control`?
 
+Answer: I would use scatterplot as it will show how these two variables are related, whether there is a correlation, and the nature of that correlation (positive, negative, or none).
 
 
 - In the R code chunk below titled `relationship-plot`, plot this relationship using the variable `pf_expression_control` as the predictor/explanatory variable.
 
 ```{r relationship-plot}
-
+ggplot(hfi_2016, aes(x=pf_score, y= pf_expression_control)) + geom_point() 
 ```
 
 4. Does the relationship look linear?
   If you knew a country's `pf_expression_control`, or its score out of 10, with 0 being the most, of political pressures and controls on media content, would you be comfortable using a linear model to predict the personal freedom score?
+  
+  Answer: Yes the relationship looks linear and appears to have a positive trend, and I would be comfortable using a linear model to predict the personal score.
 
 #### Challenge
 
@@ -127,11 +145,43 @@ For example, in (4) you were asked to comment on the center, spread, shape, and 
 What measures could/should be used to describe these?
 You might not know of one for each of those terms.
 
+Answer: For center, I will use median.
+For spread, I will use IQR and SD.
+For shape, I will use skewness & Kurtosis
+For Outliers, I will calculate Q1 and Q3 and values outside these bounds will be outliers.
+
 What numerical summary would you use to describe the relationship between two numerical variables?
 (hint: explore the `cor` function from Base R)
 
 ```{r challenge}
+# For pf_score
 
+pf_score_stats <- hfi_2016 %>% summarise(
+  Median = median(pf_score, na.rm = TRUE),
+  IQR = IQR(pf_score, na.rm = TRUE),
+  SD = sd(pf_score, na.rm = TRUE),
+  Skewness = e1071::skewness(pf_score, na.rm = TRUE),
+  Kurtosis = e1071::kurtosis(pf_expression_control, na.rm = TRUE)
+)
+
+pf_score_stats
+
+# For pf_expression_control
+
+pf_expression_control_stats<- hfi_2016 %>% summarise(
+  Median = median(pf_expression_control, na.rm = TRUE),
+  IQR = IQR(pf_expression_control, na.rm = TRUE),
+  SD = sd(pf_expression_control, na.rm = TRUE),
+  Skewness = e1071::skewness(pf_expression_control, na.rm = TRUE),
+  Kurtosis = e1071::kurtosis(pf_expression_control, na.rm = TRUE)
+)
+
+pf_expression_control_stats
+
+# For relationship between these two
+
+correlation <- cor(hfi_2016$pf_score, hfi_2016$pf_expression_control, use="complete.obs")
+correlation
 ```
 
 
@@ -145,7 +195,7 @@ To begin, we will create a `{parsnip}` specification for a linear model.
 
 - In the code chunk below titled `parsnip-spec`, replace "verbatim" with "r" just before the code chunk title.
 
-```{verbatim parsnip-spec}
+```{r parsnip-spec}
 lm_spec <- linear_reg() %>%
   set_mode("regression") %>%
   set_engine("lm")
@@ -167,7 +217,7 @@ Look at your knitted document to see how this syntax appears.
 
 - In the code chunk below titled `fit-lm`, replace "verbatim" with "r" just before the code chunk title. 
 
-```{verbatim fit-lm}
+```{r fit-lm}
 slr_mod <- lm_spec %>% 
   fit(pf_score ~ pf_expression_control, data = hfi_2016)
 
@@ -179,11 +229,13 @@ The above code fits our SLR model, then provides a `tidy` parameter estimates ta
 5. Using the `tidy` output, update the below formula with the estimated parameters.
   That is, replace "intercept" and "slope" with the appropriate values
 
-$\hat{\texttt{pf\score}} = intercept + slope \times \texttt{pf\_expression\_control}$
+$\hat{\texttt{pf\score}} = 4.28 + 0.54 \times \texttt{pf\_expression\_control}$
 
 
 6. Interpret each of the estimated parameters from (5) in the context of this research question.
   That is, what do these values represent?
+  
+  Answer: The intercept, The human freedom score with no amount of political pressure on media is 4.2838153. For each additional amount of political pressure on media content score, we would expect the human freedom score to increase by 0.54.
 
 ## Day 2
 
@@ -301,7 +353,7 @@ We should also verify this condition with a plot of the residuals vs. fitted (pr
 
 - In the code chunk below titled `fitted-residual`, replace "verbatim" with "r" just before the code chunk title. 
   
-```{verbatim fitted-residual}
+```{r fitted-residual}
 ggplot(data = train_aug, aes(x = .fitted, y = .resid)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
@@ -322,7 +374,7 @@ Answer the following question:
 
 - In the code chunk below titled `residual-histogram`, replace "verbatim" with "r" just before the code chunk title. 
  
-```{verbatim fitted-residual}
+```{r fitted-residual}
 ggplot(data = train_aug, aes(x = .resid)) +
   geom_histogram(binwidth = 0.25) +
   xlab("Residuals")
