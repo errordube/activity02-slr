@@ -28,7 +28,8 @@ If you would like to try the *ISLR* labs using these two packages instead of bas
   Be sure to check both your **User Library** and **System Library**.
 - If either of these are not currently listed, type the following in your **Console** pane, replacing `package_name` with the appropriate name, and  press Enter/Return afterwards.
   
-  ```{r install-example, eval = FALSE}
+  
+  ```r
   # Note: the "eval = FALSE" in the above line tells R not to evaluate this code
   install.packages("package_name")
   ```
@@ -36,16 +37,55 @@ If you would like to try the *ISLR* labs using these two packages instead of bas
 - Once you have verified that both `{tidyverse}` and `{tidymodels}` are installed, load these packages in the R chunk below titled `setup`.
   That is, type the following:
   
-  ```{r library-example, eval = FALSE}
+  
+  ```r
   library(tidyverse)
   library(tidymodels)
   ```
   
 - Run the `setup` code chunk and/or **knit** <img src="../README-img/knit-icon.png" alt="knit" width = "20"/> icon your Rmd document to verify that no errors occur.
 
-```{r setup}
+
+```r
 library(tidyverse)
+```
+
+```
+## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+## ✔ dplyr     1.1.2     ✔ readr     2.1.4
+## ✔ forcats   1.0.0     ✔ stringr   1.5.1
+## ✔ ggplot2   3.4.3     ✔ tibble    3.2.1
+## ✔ lubridate 1.9.3     ✔ tidyr     1.3.0
+## ✔ purrr     1.0.1     
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
+```
+
+```r
 library(tidymodels)
+```
+
+```
+## ── Attaching packages ────────────────────────────────────── tidymodels 1.1.0 ──
+## ✔ broom        1.0.5     ✔ rsample      1.1.1
+## ✔ dials        1.2.0     ✔ tune         1.1.1
+## ✔ infer        1.0.4     ✔ workflows    1.1.3
+## ✔ modeldata    1.1.0     ✔ workflowsets 1.0.1
+## ✔ parsnip      1.1.0     ✔ yardstick    1.2.0
+## ✔ recipes      1.0.6     
+## ── Conflicts ───────────────────────────────────────── tidymodels_conflicts() ──
+## ✖ scales::discard() masks purrr::discard()
+## ✖ dplyr::filter()   masks stats::filter()
+## ✖ recipes::fixed()  masks stringr::fixed()
+## ✖ dplyr::lag()      masks stats::lag()
+## ✖ yardstick::spec() masks readr::spec()
+## ✖ recipes::step()   masks stats::step()
+## • Search for functions across packages at https://www.tidymodels.org/find/
+```
+
+```r
 library(dplyr)
 ```
 
@@ -75,9 +115,31 @@ In the R code chunk below titled `hfi-2016`, type the code that does the followi
 - Filter the data `hfi` data frame for year 2016, and
 - Assigns the result to a data frame named `hfi_2016`.
 
-```{r hfi-2016}
+
+```r
 hfi <- read_csv("hfi.csv")
+```
+
+```
+## Rows: 1458 Columns: 123
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: ","
+## chr   (3): ISO_code, countries, region
+## dbl (120): year, pf_rol_procedural, pf_rol_civil, pf_rol_criminal, pf_rol, p...
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+```
+
+```r
 dim(hfi)
+```
+
+```
+## [1] 1458  123
+```
+
+```r
 hfi_2016 <- hfi %>% filter(year == "2016") %>% select(year, ISO_code, countries, region, pf_score, pf_expression_control)
 ```
 
@@ -103,17 +165,24 @@ Answer the following questions (use your markdown skills) and complete the follo
 - In the R code chunk below titled `univariable-plots`, type the R code that displays this plot for `pf_score`.
 - In the R code chunk below titled `univariable-plots`, type the R code that displays this plot for `pf_expression_control`.
 
-```{r distribution-plots}
+
+```r
 ggplot(hfi_2016, aes(y = pf_score)) +
   geom_boxplot(fill = "grey") +
   ggtitle("Box Plot of Personal Freedom Scores") +
   ylab("Personal Freedom Score")
+```
 
+![](activity02_files/figure-gfm/distribution-plots-1.png)<!-- -->
+
+```r
 ggplot(hfi_2016, aes(y = pf_expression_control)) +
   geom_boxplot(fill = "grey") +
   ggtitle("Box Plot of Political Pressures and Controls on Media Content Index") +
   ylab("Political Pressures and Controls on Media Content Index")
 ```
+
+![](activity02_files/figure-gfm/distribution-plots-2.png)<!-- -->
 
 4. Comment on each of these two distributions. 
   Be sure to describe their centers, spread, shape, and any potential outliers.
@@ -129,9 +198,12 @@ Answer: I would use scatterplot as it will show how these two variables are rela
 
 - In the R code chunk below titled `relationship-plot`, plot this relationship using the variable `pf_expression_control` as the predictor/explanatory variable.
 
-```{r relationship-plot}
+
+```r
 ggplot(hfi_2016, aes(x=pf_score, y= pf_expression_control)) + geom_point() 
 ```
+
+![](activity02_files/figure-gfm/relationship-plot-1.png)<!-- -->
 
 4. Does the relationship look linear?
   If you knew a country's `pf_expression_control`, or its score out of 10, with 0 being the most, of political pressures and controls on media content, would you be comfortable using a linear model to predict the personal freedom score?
@@ -153,7 +225,8 @@ For Outliers, I will calculate Q1 and Q3 and values outside these bounds will be
 What numerical summary would you use to describe the relationship between two numerical variables?
 (hint: explore the `cor` function from Base R)
 
-```{r challenge}
+
+```r
 # For pf_score
 
 pf_score_stats <- hfi_2016 %>% summarise(
@@ -165,7 +238,16 @@ pf_score_stats <- hfi_2016 %>% summarise(
 )
 
 pf_score_stats
+```
 
+```
+## # A tibble: 1 × 5
+##   Median   IQR    SD Skewness Kurtosis
+##    <dbl> <dbl> <dbl>    <dbl>    <dbl>
+## 1   6.93  2.12  1.49   -0.390   -0.948
+```
+
+```r
 # For pf_expression_control
 
 pf_expression_control_stats<- hfi_2016 %>% summarise(
@@ -177,11 +259,24 @@ pf_expression_control_stats<- hfi_2016 %>% summarise(
 )
 
 pf_expression_control_stats
+```
 
+```
+## # A tibble: 1 × 5
+##   Median   IQR    SD Skewness Kurtosis
+##    <dbl> <dbl> <dbl>    <dbl>    <dbl>
+## 1      5  3.44  2.32  -0.0656   -0.948
+```
+
+```r
 # For relationship between these two
 
 correlation <- cor(hfi_2016$pf_score, hfi_2016$pf_expression_control, use="complete.obs")
 correlation
+```
+
+```
+## [1] 0.8450646
 ```
 
 
@@ -195,12 +290,19 @@ To begin, we will create a `{parsnip}` specification for a linear model.
 
 - In the code chunk below titled `parsnip-spec`, replace "verbatim" with "r" just before the code chunk title.
 
-```{r parsnip-spec}
+
+```r
 lm_spec <- linear_reg() %>%
   set_mode("regression") %>%
   set_engine("lm")
 
 lm_spec
+```
+
+```
+## Linear Regression Model Specification (regression)
+## 
+## Computational engine: lm
 ```
 
 Note that the `set_mode("regression")` is really unnecessary/redundant as linear models (`"lm"`) can only be regression models.
@@ -217,11 +319,20 @@ Look at your knitted document to see how this syntax appears.
 
 - In the code chunk below titled `fit-lm`, replace "verbatim" with "r" just before the code chunk title. 
 
-```{r fit-lm}
+
+```r
 slr_mod <- lm_spec %>% 
   fit(pf_score ~ pf_expression_control, data = hfi_2016)
 
 tidy(slr_mod)
+```
+
+```
+## # A tibble: 2 × 5
+##   term                  estimate std.error statistic  p.value
+##   <chr>                    <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)              4.28     0.149       28.8 4.23e-65
+## 2 pf_expression_control    0.542    0.0271      20.0 2.31e-45
 ```
 
 The above code fits our SLR model, then provides a `tidy` parameter estimates table.
@@ -254,8 +365,17 @@ We use `glance` from  `{broom}` (which is automatically loaded with `{tidymodels
 
 - In the code chunk below titled `glance-lm`, replace "verbatim" with "r" just before the code chunk title. 
 
-```{r glance-mod}
+
+```r
 glance(slr_mod)
+```
+
+```
+## # A tibble: 1 × 12
+##   r.squared adj.r.squared sigma statistic  p.value    df logLik   AIC   BIC
+##       <dbl>         <dbl> <dbl>     <dbl>    <dbl> <dbl>  <dbl> <dbl> <dbl>
+## 1     0.714         0.712 0.799      400. 2.31e-45     1  -193.  391.  400.
+## # ℹ 3 more variables: deviance <dbl>, df.residual <int>, nobs <int>
 ```
 
 After doing this and running the code, answer the following questions:
@@ -286,7 +406,8 @@ Using the `diamonds` example provided to you in the Day 2 `README`, do the follo
 - Using your initial split R object, assign the two splits into a training R object and a testing R object.
 
 
-```{r Splitting dataset into training & testing}
+
+```r
 # Set seed before random split
 set.seed(2024)
 
@@ -299,8 +420,44 @@ hfi_2016_test <- testing(hfi_2016_split)
 
 # splits
 hfi_2016_train
-hfi_2016_test
+```
 
+```
+## # A tibble: 129 × 6
+##     year ISO_code countries  region               pf_score pf_expression_control
+##    <dbl> <chr>    <chr>      <chr>                   <dbl>                 <dbl>
+##  1  2016 ISL      Iceland    Western Europe           9.08                  8.75
+##  2  2016 CRI      Costa Rica Latin America & the…     8.17                  8.5 
+##  3  2016 EGY      Egypt      Middle East & North…     3.89                  1.5 
+##  4  2016 TZA      Tanzania   Sub-Saharan Africa       6.13                  4.5 
+##  5  2016 NIC      Nicaragua  Latin America & the…     6.43                  4   
+##  6  2016 NAM      Namibia    Sub-Saharan Africa       7.39                  6.75
+##  7  2016 QAT      Qatar      Middle East & North…     5.53                  3.25
+##  8  2016 CPV      Cape Verde Sub-Saharan Africa       7.99                  7.75
+##  9  2016 BGD      Bangladesh South Asia               5.30                  3.25
+## 10  2016 BEN      Benin      Sub-Saharan Africa       7.50                  7.25
+## # ℹ 119 more rows
+```
+
+```r
+hfi_2016_test
+```
+
+```
+## # A tibble: 33 × 6
+##     year ISO_code countries     region            pf_score pf_expression_control
+##    <dbl> <chr>    <chr>         <chr>                <dbl>                 <dbl>
+##  1  2016 ALB      Albania       Eastern Europe        7.60                  5.25
+##  2  2016 ARG      Argentina     Latin America & …     8.10                  5.5 
+##  3  2016 AUT      Austria       Western Europe        9.25                  8   
+##  4  2016 AZE      Azerbaijan    Caucasus & Centr…     5.68                  0.25
+##  5  2016 BLR      Belarus       Eastern Europe        6.06                  2.5 
+##  6  2016 BLZ      Belize        Latin America & …     7.43                  6.75
+##  7  2016 BTN      Bhutan        South Asia            6.60                  5   
+##  8  2016 BGR      Bulgaria      Eastern Europe        8.16                  5.75
+##  9  2016 BFA      Burkina Faso  Sub-Saharan Afri…     7.46                  7   
+## 10  2016 CIV      Cote d'Ivoire Sub-Saharan Afri…     7.06                  5.25
+## # ℹ 23 more rows
 ```
 
 
@@ -308,11 +465,20 @@ Now, you will use your training dataset to fit a SLR model.
 
 - In the code chunk below titled `train-fit-lm`, replace "verbatim" with "r" just before the code chunk title and update the data set to your training R object you just created.
 
-```{r train-fit-lm}
+
+```r
 slr_train <- lm_spec %>% 
   fit(pf_score ~ pf_expression_control, data = hfi_2016)
 
 tidy(slr_train)
+```
+
+```
+## # A tibble: 2 × 5
+##   term                  estimate std.error statistic  p.value
+##   <chr>                    <dbl>     <dbl>     <dbl>    <dbl>
+## 1 (Intercept)              4.28     0.149       28.8 4.23e-65
+## 2 pf_expression_control    0.542    0.0271      20.0 2.31e-45
 ```
 
 Notice that you can reuse the `lm_spec` specification because we are still doing a linear model.
@@ -334,9 +500,27 @@ Now we will assess using the testing data set.
 
 - In the code chunk below titled `train-fit-lm`, replace "verbatim" with "r" just before the code chunk title and update `data_test` to whatever R object you assigned your testing data to above.
   
-```{r glance-test}
+
+```r
 test_aug <- augment(slr_train, new_data = hfi_2016_test)
 test_aug
+```
+
+```
+## # A tibble: 33 × 8
+##     year ISO_code countries  region pf_score pf_expression_control .pred  .resid
+##    <dbl> <chr>    <chr>      <chr>     <dbl>                 <dbl> <dbl>   <dbl>
+##  1  2016 ALB      Albania    Easte…     7.60                  5.25  7.13  0.468 
+##  2  2016 ARG      Argentina  Latin…     8.10                  5.5   7.26  0.836 
+##  3  2016 AUT      Austria    Weste…     9.25                  8     8.62  0.628 
+##  4  2016 AZE      Azerbaijan Cauca…     5.68                  0.25  4.42  1.26  
+##  5  2016 BLR      Belarus    Easte…     6.06                  2.5   5.64  0.421 
+##  6  2016 BLZ      Belize     Latin…     7.43                  6.75  7.94 -0.510 
+##  7  2016 BTN      Bhutan     South…     6.60                  5     6.99 -0.392 
+##  8  2016 BGR      Bulgaria   Easte…     8.16                  5.75  7.40  0.756 
+##  9  2016 BFA      Burkina F… Sub-S…     7.46                  7     8.08 -0.621 
+## 10  2016 CIV      Cote d'Iv… Sub-S…     7.06                  5.25  7.13 -0.0660
+## # ℹ 23 more rows
 ```
 
 
@@ -349,10 +533,27 @@ Can you identify what each column represents?
 
 The `.fitted` column in this output can also be obtained by using `predict` (i.e., `predict(slr_fit, new_data = data_test)`)
 
-```{r fitted}
+
+```r
 test_pred <- predict(slr_train, new_data = hfi_2016_test)
 test_pred
+```
 
+```
+## # A tibble: 33 × 1
+##    .pred
+##    <dbl>
+##  1  7.13
+##  2  7.26
+##  3  8.62
+##  4  4.42
+##  5  5.64
+##  6  7.94
+##  7  6.99
+##  8  7.40
+##  9  8.08
+## 10  7.13
+## # ℹ 23 more rows
 ```
 
 
@@ -373,10 +574,28 @@ We can use `broom::augment` to calculate these.
 
 - In the code chunk below titled `augment`, replace "verbatim" with "r" just before the code chunk title and update `data_test` to whatever R object you assigned your testing data to above. 
   
-```{r augment}
+
+```r
 train_aug <- augment(slr_train, new_data = hfi_2016_test)
 
 train_aug
+```
+
+```
+## # A tibble: 33 × 8
+##     year ISO_code countries  region pf_score pf_expression_control .pred  .resid
+##    <dbl> <chr>    <chr>      <chr>     <dbl>                 <dbl> <dbl>   <dbl>
+##  1  2016 ALB      Albania    Easte…     7.60                  5.25  7.13  0.468 
+##  2  2016 ARG      Argentina  Latin…     8.10                  5.5   7.26  0.836 
+##  3  2016 AUT      Austria    Weste…     9.25                  8     8.62  0.628 
+##  4  2016 AZE      Azerbaijan Cauca…     5.68                  0.25  4.42  1.26  
+##  5  2016 BLR      Belarus    Easte…     6.06                  2.5   5.64  0.421 
+##  6  2016 BLZ      Belize     Latin…     7.43                  6.75  7.94 -0.510 
+##  7  2016 BTN      Bhutan     South…     6.60                  5     6.99 -0.392 
+##  8  2016 BGR      Bulgaria   Easte…     8.16                  5.75  7.40  0.756 
+##  9  2016 BFA      Burkina F… Sub-S…     7.46                  7     8.08 -0.621 
+## 10  2016 CIV      Cote d'Iv… Sub-S…     7.06                  5.25  7.13 -0.0660
+## # ℹ 23 more rows
 ```
 
 
@@ -385,13 +604,16 @@ We should also verify this condition with a plot of the residuals vs. fitted (pr
 
 - In the code chunk below titled `fitted-residual`, replace "verbatim" with "r" just before the code chunk title. 
   
-```{r fitted-residual}
+
+```r
 ggplot(data = train_aug, aes(x = .pred, y = .resid)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed", color = "red") +
   xlab("Fitted values") +
   ylab("Residuals")
 ```
+
+![](activity02_files/figure-gfm/fitted-residual-1.png)<!-- -->
 
 Notice here that `train_aug` can also serve as a data set because stored within it are the fitted values ($\hat{y}$) and the residuals.
 Also note that we are getting fancy with the code here.
@@ -408,11 +630,14 @@ Answer:
 
 - In the code chunk below titled `residual-histogram`, replace "verbatim" with "r" just before the code chunk title. 
  
-```{r fitted-residual histogram}
+
+```r
 ggplot(data = train_aug, aes(x = .resid)) +
   geom_histogram(binwidth = 0.25) +
   xlab("Residuals")
 ```
+
+![](activity02_files/figure-gfm/fitted-residual histogram-1.png)<!-- -->
 
 Answer the following question:
 
