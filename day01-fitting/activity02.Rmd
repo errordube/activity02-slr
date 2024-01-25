@@ -347,9 +347,9 @@ This takes your SLR model and applies it to your testing data.
 Look at the various information produced by this code.
 Can you identify what each column represents?
 
-The `.fitted` column in this output can also be obtained by using `predict` (i.e., `predict(slr_fit, new_data = data_test)`)
+The `.pred`column in this output can also be obtained by using `predict` (i.e., `predict(slr_fit, new_data = data_test)`)
 
-```{r fitted}
+```{r  pred}
 test_pred <- predict(slr_train, new_data = hfi_2016_test)
 test_pred
 
@@ -371,10 +371,10 @@ Note that the normal residuals is not really necessary for all models (sometimes
 In order to do these checks we need access to the fitted (predicted) values and the residuals.
 We can use `broom::augment` to calculate these.
 
-- In the code chunk below titled `augment`, replace "verbatim" with "r" just before the code chunk title and update `data_test` to whatever R object you assigned your testing data to above. 
+- In the code chunk below titled `augment`, replace "verbatim" with "r" just before the code chunk title and update `data_train` to whatever R object you assigned your testing data to above. 
   
 ```{r augment}
-train_aug <- augment(slr_train, new_data = hfi_2016_test)
+train_aug <- augment(slr_train, new_data = hfi_2016_train)
 
 train_aug
 ```
@@ -402,7 +402,7 @@ Answer the following question:
 11. Is there any apparent pattern in the residuals plot?
   What does this indicate about the linearity of the relationship between the two variables?
   
-Answer: 
+Answer: It appears that the residuals are somewhat evenly distributed above and below the dashed red line, without any clear systematic pattern or shape.This suggests that the relationship between the two variables is relatively well-described by a linear model, fulfilling the linearity assumption for linear regression.  
 
 **Nearly normal residuals**: To check this condition, we can look at a histogram of the residuals.
 
@@ -419,14 +419,14 @@ Answer the following question:
 12. Based on the histogram, does the nearly normal residuals condition appear to be violated?
   Why or why not?
 
-Answer: 
+Answer: The shape of the histogram is roughly bell-shaped, which is indicative of a normal distribution. The residuals are mostly centered around zero, which is what I would expect if the model's predictions are unbiased. There is no obvious skewness to the left or right, which suggests symmetry, a characteristic of a normal distribution.
 
 **Constant variability**:
 
 13. Based on the residuals vs. fitted plot, does the constant variability condition appear to be violated?
   Why or why not?
 
-Answer: 
+Answer: There doesn't appear to be any distinct pattern such as a funnel shape where the residuals spread out for larger or smaller values of the fitted variable. The residuals seem to be randomly dispersed around the horizontal line at 0 (the line of no residual), without any systematic increase or decrease in spread as the fitted values change. The constant variability condition does not appear to be violated
 
 ## Attribution
 
